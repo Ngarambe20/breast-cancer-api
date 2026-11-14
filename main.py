@@ -1,3 +1,5 @@
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import joblib
@@ -5,6 +7,7 @@ import numpy as np
 
 # 1. Initialize app
 app = FastAPI(title="Breast Cancer Prediction API")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # 2. Load model
 model = joblib.load('model.joblib')
@@ -16,7 +19,7 @@ class PatientData(BaseModel):
 # 4. Root endpoint (just so the base URL doesn't show "Not Found")
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the Breast Cancer Prediction API. Go to /docs to test it."}
+    return FileResponse("static/index.html")
 
 # 5. Health check endpoint
 @app.get("/health")
